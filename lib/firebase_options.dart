@@ -41,46 +41,46 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDCJbYC5DIwnsyr8x3vw5FB26oMglmon_E',
-    appId: '1:846207667478:web:e67b09d67f0e0251d4d437',
-    messagingSenderId: '846207667478',
-    projectId: 'notetaking-8111c',
-    authDomain: 'notetaking-8111c.firebaseapp.com',
-    storageBucket: 'notetaking-8111c.firebasestorage.app',
+    apiKey: 'AIzaSyBIG2iXlESAoEGx9p3W7aJgS7Cl57JmVTE',
+    appId: '1:98968316573:web:012e61af2453377415c274',
+    messagingSenderId: '98968316573',
+    projectId: 'quizarea-c8594',
+    authDomain: 'quizarea-c8594.firebaseapp.com',
+    storageBucket: 'quizarea-c8594.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBEG038XgF3-E9iQqqxEhCNISLhWTpxkGs',
-    appId: '1:846207667478:android:5b247bfa3417fdbdd4d437',
-    messagingSenderId: '846207667478',
-    projectId: 'notetaking-8111c',
-    storageBucket: 'notetaking-8111c.firebasestorage.app',
+    apiKey: 'AIzaSyDpLvrD3m13UdmlIGj5kIdTChNB_6RjqBE',
+    appId: '1:98968316573:android:ec698c743193f71a15c274',
+    messagingSenderId: '98968316573',
+    projectId: 'quizarea-c8594',
+    storageBucket: 'quizarea-c8594.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBlUYuXTuovioujb6Q6ITWd5LXCoCeVlKQ',
-    appId: '1:846207667478:ios:c8dfcb5bf0b0c42bd4d437',
-    messagingSenderId: '846207667478',
-    projectId: 'notetaking-8111c',
-    storageBucket: 'notetaking-8111c.firebasestorage.app',
-    iosBundleId: 'com.notetaking.notetaking',
+    apiKey: 'AIzaSyDY6Plk300aygbfDF8I7kfibhv8DT3Usr4',
+    appId: '1:98968316573:ios:7ec6f2697df50a9c15c274',
+    messagingSenderId: '98968316573',
+    projectId: 'quizarea-c8594',
+    storageBucket: 'quizarea-c8594.firebasestorage.app',
+    iosBundleId: 'com.quizarea.quizarea',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBlUYuXTuovioujb6Q6ITWd5LXCoCeVlKQ',
-    appId: '1:846207667478:ios:c8dfcb5bf0b0c42bd4d437',
-    messagingSenderId: '846207667478',
-    projectId: 'notetaking-8111c',
-    storageBucket: 'notetaking-8111c.firebasestorage.app',
-    iosBundleId: 'com.notetaking.notetaking',
+    apiKey: 'AIzaSyDY6Plk300aygbfDF8I7kfibhv8DT3Usr4',
+    appId: '1:98968316573:ios:7ec6f2697df50a9c15c274',
+    messagingSenderId: '98968316573',
+    projectId: 'quizarea-c8594',
+    storageBucket: 'quizarea-c8594.firebasestorage.app',
+    iosBundleId: 'com.quizarea.quizarea',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDCJbYC5DIwnsyr8x3vw5FB26oMglmon_E',
-    appId: '1:846207667478:web:ec69e619992adf3fd4d437',
-    messagingSenderId: '846207667478',
-    projectId: 'notetaking-8111c',
-    authDomain: 'notetaking-8111c.firebaseapp.com',
-    storageBucket: 'notetaking-8111c.firebasestorage.app',
+    apiKey: 'AIzaSyBIG2iXlESAoEGx9p3W7aJgS7Cl57JmVTE',
+    appId: '1:98968316573:web:a87d2197cc48c0f515c274',
+    messagingSenderId: '98968316573',
+    projectId: 'quizarea-c8594',
+    authDomain: 'quizarea-c8594.firebaseapp.com',
+    storageBucket: 'quizarea-c8594.firebasestorage.app',
   );
 }

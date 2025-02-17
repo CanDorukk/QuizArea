@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:notetaking/core/LocaleManager.dart';
-import 'package:notetaking/core/ThemeManager.dart';
-import 'package:notetaking/screens/crud_screen.dart';
-import 'package:notetaking/screens/login_screen.dart';
-import 'package:notetaking/screens/settings_screen.dart';
-import 'package:notetaking/widget/bottom_nav_bar.dart';
+import 'package:quizarea/core/LocaleManager.dart';
+import 'package:quizarea/core/ThemeManager.dart';
+import 'package:quizarea/main.dart';
+import 'package:quizarea/models/authentication_model.dart';
+import 'package:quizarea/screens/levels_screen.dart';
+import 'package:quizarea/screens/login_screen.dart';
+import 'package:quizarea/widget/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,31 +16,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  User? _currentUser;
 
   final List<Widget> _screens = [
-    Center(child: Text('Ana Sayfa', style: TextStyle(fontSize: 24))),
-    SettingsScreen(),
-    CrudScreen()
+    LevelsScreen(),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-
-    _currentUser = FirebaseAuth.instance.currentUser;
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      setState(() {
-        _currentUser = user;
-      });
-    });
-  }
-
   void _onItemTapped(int index) async {
-    final localManager = Provider.of<LocalManager>(context, listen: false);
-    if (index == 3) {
+    final localManager = Provider.of<LocalManager>(context, listen: false); // 🔹 listen: false ekledik
+    if (index == 2) { // Profil ekranı seçildiğinde
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
+        // Eğer kullanıcı giriş yapmadıysa SnackBar göster ve sonra LoginScreen'e yönlendir
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(localManager.translate("loginization_message")),
@@ -47,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
 
+        // Kullanıcıyı LoginScreen'e yönlendiriyoruz
         Future.delayed(Duration(milliseconds: 1000), () {
           Navigator.push(
             context,
@@ -69,12 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final localManager = Provider.of<LocalManager>(context);
     final themeManager = Provider.of<ThemeManager>(context);
+    final authModel = Provider.of<AuthenticationModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Center(
           child: Text(localManager.translate('title')),
         ),
       ),
+
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -91,6 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+
+            // 📌 Tema Değiştirme Seçeneği
             SwitchListTile(
               title: Text(localManager.translate('dark_theme')),
               value: themeManager.themeMode == ThemeMode.dark,
@@ -99,6 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               secondary: Icon(Icons.brightness_6),
             ),
+
+            // 📌 Dil Değiştirme Seçeneği
             ListTile(
               leading: Icon(Icons.language),
               title: Text(localManager.translate('language')),
@@ -122,52 +117,48 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 16),
+
+            // 📌 Giriş Yap & Çıkış Yap Butonu
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _currentUser == null
+                  authModel.currentUser == null
                       ? ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context); // Menüyü kapat
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => LoginScreen()),
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
                       );
                     },
                     child: Text(localManager.translate('login')),
                   )
                       : ElevatedButton(
                     onPressed: () async {
-                      // Menüyü otomatik olarak kapat
-                      Navigator.pop(context);
-
+                      // 1. "Çıkış yapılıyor..." mesajını göster
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                              localManager.translate('logging_out')),
-                          duration: Duration(milliseconds: 1500),
+                          content: Text(localManager.translate('logging_out')),
+                          duration: Duration(milliseconds: 1500), // 1.5 saniye
                         ),
                       );
 
-                      await Future.delayed(
-                          Duration(milliseconds: 1500));
+                      await Future.delayed(Duration(milliseconds: 1500));
 
-                      await FirebaseAuth.instance.signOut();
+                      // 2. Firebase'den çıkış yap
+                      await authModel.signOut();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => AuthCheck()),
+                            (route) => false,
+                      );
 
-                      // Ana sayfaya dön
-                      setState(() {
-                        _selectedIndex = 0; // Ana sayfaya dön
-                        _currentUser = null; // Kullanıcıyı null yap
-                      });
-
+                      // 3. "Başarıyla çıkış yapıldı." mesajını göster
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                              localManager.translate('logout_success')),
-                          duration: Duration(milliseconds: 1500),
+                          content: Text(localManager.translate('logout_success')),
+                          duration: Duration(milliseconds: 1500), // 1.5 saniye
                         ),
                       );
                     },
@@ -179,21 +170,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          Center(
-            child: Text(
-              localManager.translate('home'),
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
-          SettingsScreen(),
-          CrudScreen(),
+          LevelsScreen(),
         ],
       ),
-      bottomNavigationBar:
-      BottomNavBar(selectedIndex: _selectedIndex, onTop: _onItemTapped),
+
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onTop: _onItemTapped,
+      ),
     );
   }
 }

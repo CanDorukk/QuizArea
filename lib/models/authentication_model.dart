@@ -1,22 +1,36 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-class AuthenticationModel {
+class AuthenticationModel extends ChangeNotifier {
     final FirebaseAuth _auth = FirebaseAuth.instance;
 
+    User? _currentUser;
 
-    Future<User?> loginWithEmailAndPassword(String email, String password) async{
-        try{
+    User? get currentUser => _currentUser;
+
+    AuthenticationModel() {
+        _auth.authStateChanges().listen((user) {
+            _currentUser = user;
+            notifyListeners(); // Oturum durumu değiştiğinde listeners'ları bilgilendir
+        });
+    }
+
+    Future<User?> loginWithEmailAndPassword(String email, String password) async {
+        try {
             UserCredential userCredential = await _auth.signInWithEmailAndPassword(
                 email: email.trim(),
                 password: password.trim(),
             );
-            return userCredential.user;
-        }on FirebaseAuthException catch (e){
+            _currentUser = userCredential.user;
+            notifyListeners(); // Oturum durumu değiştiği için listeners'ları bilgilendir
+            return _currentUser;
+        } on FirebaseAuthException catch (e) {
             throw Exception(e.message);
         }
     }
 
-    Future<User?> registerWithEmailAndPassword(String email, String password, String name) async {
+    Future<User?> registerWithEmailAndPassword(
+        String email, String password, String name, String surname) async {
         try {
             UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
                 email: email.trim(),
@@ -27,16 +41,17 @@ class AuthenticationModel {
             await userCredential.user?.updateDisplayName(name);
             await userCredential.user?.reload(); // Firebase'de güncellemeleri yansıt
 
-            return _auth.currentUser; // Güncellenmiş kullanıcıyı döndür
+            _currentUser = _auth.currentUser;
+            notifyListeners(); // Oturum durumu değiştiği için listeners'ları bilgilendir
+            return _currentUser;
         } on FirebaseAuthException catch (e) {
             throw Exception(e.message);
         }
     }
 
-
-    Future<void> signOut() async{
+    Future<void> signOut() async {
         await _auth.signOut();
+        _currentUser = null;
+        notifyListeners(); // Oturum durumu değiştiği için listeners'ları bilgilendir
     }
-
-    User? get currentUser => _auth.currentUser;
 }

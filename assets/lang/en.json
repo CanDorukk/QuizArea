@@ -23,5 +23,6 @@
   "logout": "Logout",
   "logging_out": "Signing Out",
   "logout_success": "Successfully logged out",
-  "reg_name_field": "Name"
+  "reg_name_field": "Name",
+  "sur_name_field": "Surname"
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:notetaking/core/LocaleManager.dart';
-import 'package:notetaking/core/ThemeManager.dart';
+import 'package:quizarea/core/LocaleManager.dart';
+import 'package:quizarea/core/ThemeManager.dart';
 import 'package:provider/provider.dart';
 
 

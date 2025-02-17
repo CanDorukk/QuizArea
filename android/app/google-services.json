@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "846207667478",
-    "project_id": "notetaking-8111c",
-    "storage_bucket": "notetaking-8111c.firebasestorage.app"
+    "project_number": "98968316573",
+    "project_id": "quizarea-c8594",
+    "storage_bucket": "quizarea-c8594.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:846207667478:android:5b247bfa3417fdbdd4d437",
+        "mobilesdk_app_id": "1:98968316573:android:ec698c743193f71a15c274",
         "android_client_info": {
-          "package_name": "com.notetaking.notetaking"
+          "package_name": "com.quizarea.quizarea"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBEG038XgF3-E9iQqqxEhCNISLhWTpxkGs"
+          "current_key": "AIzaSyDpLvrD3m13UdmlIGj5kIdTChNB_6RjqBE"
         }
       ],
       "services": {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notetaking/core/LocaleManager.dart';
+import 'package:quizarea/core/LocaleManager.dart';
 import 'package:provider/provider.dart';
 class BottomNavBar extends StatelessWidget{
   final int selectedIndex;

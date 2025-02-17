@@ -1,4 +1,4 @@
-# notetaking
+# quizarea
 
 A new Flutter project.
 

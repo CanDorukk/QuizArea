@@ -1,4 +1,4 @@
-name: notetaking
+name: quizarea
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -34,12 +34,14 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  flutter_localization: ^0.3.1
   provider: ^6.1.2
-  firebase_core: ^3.11.0
-  cloud_firestore: ^5.6.3
+  flutter_localization: ^0.3.1
   firebase_auth: ^5.4.2
-  shared_preferences: ^2.5.2
+  firebase_core: ^3.11.0
+  intro_slider: ^4.2.1
+  flutter_svg: ^2.0.17
+  smooth_page_indicator: ^1.2.0+3
+
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +62,10 @@ flutter:
   assets:
     - assets/lang/tr.json
     - assets/lang/en.json
+    - assets/images/image1.png
+    - assets/images/image2.png
+    - assets/images/image3.png
+    - assets/images/login_page_image.jpg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

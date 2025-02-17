@@ -1,6 +1,6 @@
 {
-    "name": "notetaking",
-    "short_name": "notetaking",
+    "name": "quizarea",
+    "short_name": "quizarea",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

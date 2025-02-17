@@ -23,5 +23,6 @@
   "logout": "Çıkış Yap",
   "logging_out": "Çıkış yapılıyor",
   "logout_success": "Başarıyla çıkış yapıldı.",
-  "reg_name_field": "İsim"
+  "reg_name_field": "İsim",
+  "sur_name_field": "Soyisim"
 }
