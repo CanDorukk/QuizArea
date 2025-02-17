@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'quizarea-c8594.firebaseapp.com',
     storageBucket: 'quizarea-c8594.firebasestorage.app',
   );
+
 }

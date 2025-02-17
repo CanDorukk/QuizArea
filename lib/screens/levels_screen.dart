@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizarea/levels/level_1.dart';
 
 class LevelsScreen extends StatelessWidget {
   @override
@@ -7,7 +8,7 @@ class LevelsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Levels Screen"),
         centerTitle: true,
-        automaticallyImplyLeading: false,  // This will remove the back button
+        automaticallyImplyLeading: false,
       ),
       body: CustomLevelPath(),
     );
@@ -16,30 +17,35 @@ class LevelsScreen extends StatelessWidget {
 
 class CustomLevelPath extends StatelessWidget {
   final List<Offset> levelPositions = [
-    Offset(100, 100), // 1. yuvarlak: Sol-orta
-    Offset(250, 200), // 2. yuvarlak: Orta-sağ
-    Offset(100, 300), // 3. yuvarlak: Sol-orta
-    Offset(250, 400), // 4. yuvarlak: Orta-sağ
+    Offset(100, 100),
+    Offset(250, 200),
+    Offset(100, 300),
+    Offset(250, 400),
+  ];
+
+  final List<IconData> levelIcons = [
+    Icons.star,
+    Icons.book,
+    Icons.music_note,
+    Icons.ac_unit,
   ];
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Eğri çizgiler
         CustomPaint(
           size: Size.infinite,
           painter: LevelLinePainter(levelPositions),
         ),
-        // Yuvarlak butonlar
         for (int i = 0; i < levelPositions.length; i++)
           Positioned(
-            left: levelPositions[i].dx - 40, // Yuvarlak butonun merkezi
-            top: levelPositions[i].dy - 40, // Yuvarlak butonun merkezi
+            left: levelPositions[i].dx - 40,
+            top: levelPositions[i].dy - 40,
             child: LevelButton(
-              level: 'Seviye ${i + 1}',
+              icon: levelIcons[i],
               onPressed: () {
-                _showLevelCard(context, 'Seviye ${i + 1}', levelPositions[i]);
+                _showLevelCard(context, 'Seviye ${i + 1}');
               },
             ),
           ),
@@ -47,33 +53,29 @@ class CustomLevelPath extends StatelessWidget {
     );
   }
 
-  void _showLevelCard(BuildContext context, String level, Offset buttonPosition) {
-    // OverlayEntry'yi üst seviyede tanımla
+  void _showLevelCard(BuildContext context, String level) {
     late OverlayEntry overlayEntry;
 
-    // OverlayEntry oluştur
     overlayEntry = OverlayEntry(
       builder: (context) => GestureDetector(
-        // Ekranın herhangi bir yerine tıklandığında kartı kapat
         onTap: () {
-          overlayEntry.remove(); // Kartı kapat
+          overlayEntry.remove();
         },
         child: Material(
-          color: Colors.black.withOpacity(0.5), // Arka planı karart
+          color: Colors.black.withOpacity(0.5),
           child: Center(
             child: GestureDetector(
-              // Kartın içine tıklandığında kapatma
-              onTap: () {}, // Kartın içine tıklandığında hiçbir şey yapma
+              onTap: () {},
               child: Card(
-                elevation: 4.0, // Gölge efekti
+                elevation: 4.0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Köşeleri yuvarlak
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Container(
-                  width: 300.0, // Kartın genişliği
+                  width: 300.0,
                   padding: EdgeInsets.all(16.0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, // Kartın boyutunu içeriğe göre ayarla
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         level,
@@ -82,11 +84,10 @@ class CustomLevelPath extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 16.0), // Boşluk
+                      SizedBox(height: 16.0),
                       ElevatedButton(
                         onPressed: () {
-                          // Başlat butonuna tıklandığında yapılacak işlem
-                          overlayEntry.remove(); // Kartı kapat
+                          overlayEntry.remove();
                           _startLevel(context, level);
                         },
                         child: Text('Başlat'),
@@ -101,19 +102,14 @@ class CustomLevelPath extends StatelessWidget {
       ),
     );
 
-    // Overlay'e kartı ekle
-    if (Overlay.of(context) != null) {
-      Overlay.of(context)!.insert(overlayEntry);
-    } else {
-      print("Overlay bulunamadı!"); // Hata durumunda log
-    }
+    Overlay.of(context)?.insert(overlayEntry);
   }
 
   void _startLevel(BuildContext context, String level) {
-    // Bölümü başlatma işlemleri burada yapılır
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$level başlatıldı!'),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LevelDetailScreen(level: level),
       ),
     );
   }
@@ -151,11 +147,11 @@ class LevelLinePainter extends CustomPainter {
 }
 
 class LevelButton extends StatelessWidget {
-  final String level;
+  final IconData icon;
   final VoidCallback onPressed;
 
   const LevelButton({
-    required this.level,
+    required this.icon,
     required this.onPressed,
   });
 
@@ -164,26 +160,23 @@ class LevelButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: 80.0, // Yuvarlak buton boyutu
-        height: 80.0, // Yuvarlak buton boyutu
+        width: 80.0,
+        height: 80.0,
         decoration: BoxDecoration(
           color: Colors.blue,
-          shape: BoxShape.circle, // Yuvarlak buton
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              offset: Offset(-1, 5),
+            ),
+          ],
         ),
         child: Center(
-          child: FittedBox(
-            fit: BoxFit.scaleDown, // Yazıyı otomatik sığdır
-            child: Text(
-              level,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.0, // Yazı boyutu
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center, // Yazıyı ortala
-              maxLines: 2, // Maksimum satır sayısı
-              overflow: TextOverflow.ellipsis, // Taşan yazıyı "..." ile göster
-            ),
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 40.0,
           ),
         ),
       ),

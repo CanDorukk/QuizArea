@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:quizarea/core/LocaleManager.dart';
 import 'package:quizarea/core/ThemeManager.dart';
+import 'package:quizarea/data/json_upload.dart';
 import 'package:quizarea/models/authentication_model.dart';
 import 'package:quizarea/onboarding/onboard.dart';
 import 'package:quizarea/screens/home_screen.dart';
@@ -13,7 +15,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
+  // Firestore ayarlarını yapıyoruz
+  FirebaseFirestore.instance.settings = Settings(
+    persistenceEnabled: true, // Çevrimdışı verileri etkinleştiriyoruz
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED, // Cache boyutunu sınırsız yapıyoruz
+  );
+  //await uploadWords(); // JSON verisini yüklemek için
   runApp(MyApp());
 }
 

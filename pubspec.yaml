@@ -41,6 +41,7 @@ dependencies:
   intro_slider: ^4.2.1
   flutter_svg: ^2.0.17
   smooth_page_indicator: ^1.2.0+3
+  cloud_firestore: ^5.6.3
 
 
 dev_dependencies:
@@ -66,6 +67,7 @@ flutter:
     - assets/images/image2.png
     - assets/images/image3.png
     - assets/images/login_page_image.jpg
+    - assets/json/ing_kelimeler.json
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
