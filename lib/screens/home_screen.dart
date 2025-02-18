@@ -6,6 +6,8 @@ import 'package:quizarea/main.dart';
 import 'package:quizarea/models/authentication_model.dart';
 import 'package:quizarea/screens/levels_screen.dart';
 import 'package:quizarea/screens/login_screen.dart';
+import 'package:quizarea/screens/proife_screen.dart';
+import 'package:quizarea/screens/register_screen.dart';
 import 'package:quizarea/widget/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     LevelsScreen(),
+    ProfileScreen(),
+    RegisterScreen(),
+
   ];
 
   void _onItemTapped(int index) async {
@@ -175,6 +180,8 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _selectedIndex,
         children: [
           LevelsScreen(),
+          ProfileScreen(),
+          RegisterScreen(),
         ],
       ),
 

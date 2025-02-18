@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quizarea/core/LocaleManager.dart';
 import 'package:flutter/material.dart';
-import 'package:quizarea/screens/home_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:quizarea/screens/login_screen.dart';
+import 'package:quizarea/screens/home_screen.dart';import 'package:provider/provider.dart';
+import 'package:quizarea/models/authentication_model.dart';
+import 'package:quizarea/screens/login_screen.dart'; // AuthenticationModel'in bulunduğu dosya
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -11,7 +11,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisteScreenState extends State<RegisterScreen> {
-  final FirebaseAuth _authModel = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -30,15 +29,29 @@ class _RegisteScreenState extends State<RegisterScreen> {
       );
       return;
     }
+    if (!_emailController.text.trim().contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Geçerli bir e-posta adresi girin!")),
+      );
+      return;
+    }
+
+    if (_passwordController.text.trim().length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Parola en az 6 karakter olmalıdır!")),
+      );
+      return;
+    }
+
+    final authModel = Provider.of<AuthenticationModel>(context, listen: false);
 
     try {
-      UserCredential userCredential = await _authModel.createUserWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+      await authModel.registerWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+        _nameController.text.trim(),
+        _surnameController.text.trim(),
       );
-
-      await userCredential.user?.updateDisplayName(_nameController.text.trim());
-      await userCredential.user?.reload();
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Kayıt başarılı!")),
@@ -55,6 +68,10 @@ class _RegisteScreenState extends State<RegisterScreen> {
         SnackBar(content: Text(e.toString())),
       );
     }
+    _emailController.clear();
+    _passwordController.clear();
+    _nameController.clear();
+    _surnameController.clear();
   }
 
   @override
