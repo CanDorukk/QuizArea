@@ -1,5 +1,5 @@
 {
-  "title": "Household Goods Rental",
+  "title": "Quiz Area",
   "settings": "Settings",
   "home": "Home",
   "profile": "Profile",
@@ -25,4 +25,5 @@
   "logout_success": "Successfully logged out",
   "reg_name_field": "Name",
   "sur_name_field": "Surname"
+
 }

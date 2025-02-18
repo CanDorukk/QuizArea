@@ -15,6 +15,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+
   // Firestore ayarlarını yapıyoruz
   FirebaseFirestore.instance.settings = Settings(
     persistenceEnabled: true, // Çevrimdışı verileri etkinleştiriyoruz

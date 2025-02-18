@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:quizarea/levels/level_1.dart';
 
+
+
+
 class LevelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,10 @@ class LevelsScreen extends StatelessWidget {
   }
 }
 
+
 class CustomLevelPath extends StatelessWidget {
+
+
   final List<Offset> levelPositions = [
     Offset(100, 100),
     Offset(250, 200),
