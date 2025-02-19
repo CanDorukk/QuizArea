@@ -1,5 +1,5 @@
 {
-  "A1_first_50": [
+  "Level_2": [
     { "english": "apple", "turkish": "elma" },
     { "english": "book", "turkish": "kitap" },
     { "english": "cat", "turkish": "kedi" },
@@ -30,27 +30,7 @@
     { "english": "star", "turkish": "yıldız" },
     { "english": "flower", "turkish": "çiçek" },
     { "english": "tree", "turkish": "ağaç" },
-    { "english": "door", "turkish": "kapı" },
-    { "english": "window", "turkish": "pencere" },
-    { "english": "key", "turkish": "anahtar" },
-    { "english": "milk", "turkish": "süt" },
-    { "english": "bread", "turkish": "ekmek" },
-    { "english": "cheese", "turkish": "peynir" },
-    { "english": "egg", "turkish": "yumurta" },
-    { "english": "rice", "turkish": "pirinç" },
-    { "english": "meat", "turkish": "et" },
-    { "english": "fish", "turkish": "balık" },
-    { "english": "chicken", "turkish": "tavuk" },
-    { "english": "salt", "turkish": "tuz" },
-    { "english": "sugar", "turkish": "şeker" },
-    { "english": "tea", "turkish": "çay" },
-    { "english": "coffee", "turkish": "kahve" },
-    { "english": "juice", "turkish": "meyve suyu" },
-    { "english": "fruit", "turkish": "meyve" },
-    { "english": "vegetable", "turkish": "sebze" },
-    { "english": "market", "turkish": "market" },
-    { "english": "shop", "turkish": "dükkan" },
-    { "english": "money", "turkish": "para" }
+    { "english": "door", "turkish": "kapı" }
   ]
 }
 

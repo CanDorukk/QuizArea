@@ -2,6 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final User? user = _auth.currentUser;
 
 class LevelDetailScreen extends StatefulWidget {
   final String level;
@@ -162,25 +166,138 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
     );
   }
 
-  void _showLevelCompletedDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text("Seviye Tamamlandı"),
-        content: Text("Tebrikler! Bu seviyeyi başarıyla tamamladınız."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop(); // Ana sayfa
-            },
-            child: Text("Ana Sayfa"),
-          ),
-        ],
-      ),
-    );
+
+  void _updateUserScore() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('Kullanıcı oturumu açık değil!');
+      return;
+    }
+
+    final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    try {
+      final snapshot = await docRef.get();
+      if (!snapshot.exists) {
+        print('Kullanıcı belgesi bulunamadı!');
+        return;
+      }
+
+      final currentScore = (snapshot.data()?['score'] ?? 0) as int;
+      final newScore = currentScore + 5;
+
+      await docRef.update({'score': newScore});
+
+      print('Puan güncellendi: $newScore');
+    } catch (e) {
+      print('Puan güncelleme hatası: $e');
+    }
   }
+
+
+  // Kullanıcının tamamladığı seviyelerin veri tabanında completed_levels içerisine eklenmesi
+  void _updateCompletedLevels() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('Kullanıcı oturumu açık değil!');
+      return;
+    }
+
+    final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    try {
+      final snapshot = await docRef.get();
+      if (!snapshot.exists) {
+        print('Kullanıcı belgesi bulunamadı!');
+        return;
+      }
+
+      // Mevcut completed_levels dizisini al
+      List<dynamic> completedLevels = List.from(snapshot.data()?['completed_levels'] ?? []);
+
+      // Seviye zaten eklenmişse, bir şey yapma
+      if (!completedLevels.contains(widget.level)) {
+        completedLevels.add(widget.level);
+        await docRef.update({'completed_levels': completedLevels});
+        print('Tamamlanan seviye güncellendi!');
+      } else {
+        print('Bu seviye zaten tamamlanmış!');
+      }
+    } catch (e) {
+      print('Seviye güncelleme hatası: $e');
+    }
+  }
+
+
+  void _showLevelCompletedDialog() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      print('Kullanıcı oturumu açık değil!');
+      return;
+    }
+
+    final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    try {
+      final snapshot = await docRef.get();
+      if (!snapshot.exists) {
+        print('Kullanıcı belgesi bulunamadı!');
+        return;
+      }
+
+      List<dynamic> completedLevels = List.from(snapshot.data()?['completed_levels'] ?? []);
+
+      // Seviye tamamlanmamışsa, puan ekle ve tamamlanan seviyeye ekle
+      if (!completedLevels.contains(widget.level)) {
+        // Seviye tamamlanmamışsa, kullanıcıya 5 puan ekle
+        _updateUserScore();
+        completedLevels.add(widget.level);
+        await docRef.update({'completed_levels': completedLevels});
+        print('Seviye tamamlandı ve puan eklendi!');
+        // Diğer işlemler
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: Text("Seviye Tamamlandı"),
+            content: Text("Tebrikler! Bu seviyeyi başarıyla tamamladınız.\n5 Puan Kazandınız!"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Ana sayfaya dön
+                },
+                child: Text("Ana Sayfa"),
+              ),
+            ],
+          ),
+        );
+      } else {
+        // Seviye daha önce tamamlandıysa, sadece kullanıcıya mesaj göster
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: Text("Seviye Tamamlandı"),
+            content: Text("Daha önce bu seviyeyi tamamladınız!\nPuan Kazanmıştınız."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Ana sayfaya dön
+                },
+                child: Text("Ana Sayfa"),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print('Seviye güncelleme hatası: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {

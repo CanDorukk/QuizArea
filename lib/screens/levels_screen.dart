@@ -161,7 +161,7 @@ class CustomLevelPath extends StatelessWidget {
     int levelNumber = int.tryParse(level.replaceAll("Seviye ", "")) ?? 1;
 
     if (levelNumber <= 10) {
-      return "A1_first_${50 * levelNumber}";
+      return "Level_${levelNumber}";
     } else if (levelNumber <= 20) {
       return "A2_first_${50 * (levelNumber - 10)}";
     }

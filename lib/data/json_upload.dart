@@ -10,7 +10,7 @@ Future<void> uploadWords() async {
 
   final Map<String, dynamic> data = jsonDecode(jsonString);
 
-  await firestore.collection('words').doc('A1_first_50').set(data);
+  await firestore.collection('words').doc('Level_2').set(data);
 
   print('Veri Firestore\'a yüklendi!');
 }
