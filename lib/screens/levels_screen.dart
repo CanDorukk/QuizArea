@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quizarea/levels/level_1.dart';
 
-
-
-
 class LevelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,18 +15,47 @@ class LevelsScreen extends StatelessWidget {
   }
 }
 
-
 class CustomLevelPath extends StatelessWidget {
-
-
   final List<Offset> levelPositions = [
     Offset(100, 100),
     Offset(250, 200),
     Offset(100, 300),
     Offset(250, 400),
+    Offset(100, 500),
+    Offset(250, 600),
+    Offset(100, 700),
+    Offset(250, 800),
+    Offset(100, 900),
+    Offset(250, 1000),
+    Offset(100, 1100),
+    Offset(250, 1200),
+    Offset(100, 1300),
+    Offset(250, 1400),
+    Offset(100, 1500),
+    Offset(250, 1600),
+    Offset(100, 1700),
+    Offset(250, 1800),
+    Offset(100, 1900),
+    Offset(250, 2000),
   ];
 
   final List<IconData> levelIcons = [
+    Icons.star,
+    Icons.book,
+    Icons.music_note,
+    Icons.ac_unit,
+    Icons.star,
+    Icons.book,
+    Icons.music_note,
+    Icons.ac_unit,
+    Icons.star,
+    Icons.book,
+    Icons.music_note,
+    Icons.ac_unit,
+    Icons.star,
+    Icons.book,
+    Icons.music_note,
+    Icons.ac_unit,
     Icons.star,
     Icons.book,
     Icons.music_note,
@@ -38,86 +64,109 @@ class CustomLevelPath extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CustomPaint(
-          size: Size.infinite,
-          painter: LevelLinePainter(levelPositions),
-        ),
-        for (int i = 0; i < levelPositions.length; i++)
-          Positioned(
-            left: levelPositions[i].dx - 40,
-            top: levelPositions[i].dy - 40,
-            child: LevelButton(
-              icon: levelIcons[i],
-              onPressed: () {
-                _showLevelCard(context, 'Seviye ${i + 1}');
-              },
+    return SingleChildScrollView(
+      child: Container(
+        height: 2200, // Tüm seviyelerin sığacağı yükseklik
+        child: Stack(
+          children: [
+            CustomPaint(
+              size: Size(MediaQuery.of(context).size.width, 2200), // Canvas boyutu
+              painter: LevelLinePainter(levelPositions),
             ),
-          ),
-      ],
+            for (int i = 0; i < 20; i++) // 20 seviye için
+              Positioned(
+                left: levelPositions[i].dx - 40,
+                top: levelPositions[i].dy - 40,
+                child: LevelButton(
+                  icon: levelIcons[i],
+                  onPressed: () {
+                    _showLevelCard(context, 'Seviye ${i + 1}');
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
+
 
   void _showLevelCard(BuildContext context, String level) {
     late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
-      builder: (context) => GestureDetector(
-        onTap: () {
-          overlayEntry.remove();
-        },
-        child: Material(
-          color: Colors.black.withOpacity(0.5),
-          child: Center(
-            child: GestureDetector(
-              onTap: () {},
-              child: Card(
-                elevation: 4.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Container(
-                  width: 300.0,
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        level,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+      builder: (context) =>
+          GestureDetector(
+            onTap: () {
+              overlayEntry.remove();
+            },
+            child: Material(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Card(
+                    elevation: 4.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Container(
+                      width: 300.0,
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            level,
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 16.0),
+                          ElevatedButton(
+                            onPressed: () {
+                              overlayEntry.remove();
+                              _startLevel(context, level);
+                            },
+                            child: Text('Başlat'),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 16.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          overlayEntry.remove();
-                          _startLevel(context, level);
-                        },
-                        child: Text('Başlat'),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
     );
 
     Overlay.of(context)?.insert(overlayEntry);
   }
 
   void _startLevel(BuildContext context, String level) {
+    // Seviye adını dinamik olarak oluştur
+    String firestoreLevelName = _getFirestoreLevelName(level);
+    print("Firestore Doküman Adı: $firestoreLevelName"); // Debug ekle
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LevelDetailScreen(level: level),
+        builder: (context) => LevelDetailScreen(level: firestoreLevelName),
       ),
     );
+  }
+
+  String _getFirestoreLevelName(String level) {
+    // Örnek: "Seviye 1" -> "A1_first_50", "Seviye 2" -> "A1_first_100", vb.
+    int levelNumber = int.tryParse(level.replaceAll("Seviye ", "")) ?? 1;
+
+    if (levelNumber <= 10) {
+      return "A1_first_${50 * levelNumber}";
+    } else if (levelNumber <= 20) {
+      return "A2_first_${50 * (levelNumber - 10)}";
+    }
+    // Diğer seviyeler için genişletilebilir
+    return "A1_first_50"; // Varsayılan
   }
 }
 
