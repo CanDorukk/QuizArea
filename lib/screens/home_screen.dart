@@ -4,6 +4,7 @@ import 'package:quizarea/core/LocaleManager.dart';
 import 'package:quizarea/core/ThemeManager.dart';
 import 'package:quizarea/main.dart';
 import 'package:quizarea/models/authentication_model.dart';
+import 'package:quizarea/screens/leaderboard_screen.dart';
 import 'package:quizarea/screens/levels_screen.dart';
 import 'package:quizarea/screens/login_screen.dart';
 import 'package:quizarea/screens/proife_screen.dart';
@@ -23,12 +24,13 @@ class _HomeScreenState extends State<HomeScreen> {
     LevelsScreen(),
     ProfileScreen(),
     RegisterScreen(),
+    LeaderBoard()
 
   ];
 
   void _onItemTapped(int index) async {
     final localManager = Provider.of<LocalManager>(context, listen: false); // 🔹 listen: false ekledik
-    if (index == 2) { // Profil ekranı seçildiğinde
+    if (index == 15) { // Profil ekranı seçildiğinde
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
         // Eğer kullanıcı giriş yapmadıysa SnackBar göster ve sonra LoginScreen'e yönlendir
@@ -182,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
           LevelsScreen(),
           ProfileScreen(),
           RegisterScreen(),
+          LeaderBoard()
         ],
       ),
 

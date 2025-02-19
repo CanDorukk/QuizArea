@@ -62,8 +62,9 @@ class AuthenticationModel extends ChangeNotifier {
                 'score': 0, // starting score
                 'level': 1, // starting level
                 'createdAt': FieldValue.serverTimestamp(),
-                "completed_levels":[],
+                "completed_levels": [], // burada boş bir liste ekleyebilirsiniz
             });
+
 
             _currentUser = _auth.currentUser;
             notifyListeners();
