@@ -87,18 +87,14 @@ class _RegisteScreenState extends State<RegisterScreen> {
       },
       child: Scaffold(
         backgroundColor: Colors.grey[100],
-        appBar: AppBar(
-          title: Text(localManager.translate("register")),
-          centerTitle: true,
-          backgroundColor: Colors.deepPurple,
-          elevation: 0,
-        ),
+
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(height: 24),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.asset(

@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:quizarea/core/LocaleManager.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final User? user = _auth.currentUser;
@@ -34,6 +36,7 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
   }
 
   Future<List<dynamic>> _fetchWords() async {
+    final localManager = Provider.of<LocalManager>(context, listen: false);
     try {
       var snapshot = await FirebaseFirestore.instance
           .collection('words')
@@ -52,14 +55,14 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
       List<dynamic> words = data[widget.level];
 
       if (words.isEmpty) {
-        throw Exception('"${widget.level}" dokümanında kelime bulunamadı.');
+        throw Exception('"${widget.level}" ${localManager.translate("no_words_found_message")}.');
       }
 
       words.shuffle();
       return words.take(10).toList();
     } catch (e) {
       print('Hata: $e');
-      throw Exception('Kelimeler yüklenirken bir hata oluştu: $e');
+      throw Exception('${localManager.translate("loading_words_occurred_message")}: $e');
     }
   }
 
@@ -140,26 +143,27 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
   }
 
   void _showRetryDialog(String correctTurkish) {
+    final localManager = Provider.of<LocalManager>(context, listen: false);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text("Tahmin Hakkın Bitti"),
-        content: Text("Ana sayfaya dönmek veya tekrar başlamak ister misiniz?"),
+        title: Text(localManager.translate("guess_rights_over_message")),
+        content: Text(localManager.translate("return_homepage_or_restart")),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pop(); // Ana sayfa
             },
-            child: Text("Ana Sayfa"),
+            child: Text(localManager.translate("home")),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               _restartLevel();
             },
-            child: Text("Tekrar Başla"),
+            child: Text(localManager.translate("play_again")),
           ),
         ],
       ),
@@ -245,7 +249,7 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
         print('Kullanıcı belgesi bulunamadı!');
         return;
       }
-
+      final localManager = Provider.of<LocalManager>(context , listen: false);
       List<dynamic> completedLevels = List.from(snapshot.data()?['completed_levels'] ?? []);
 
       // Seviye tamamlanmamışsa, puan ekle ve tamamlanan seviyeye ekle
@@ -260,15 +264,15 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text("Seviye Tamamlandı"),
-            content: Text("Tebrikler! Bu seviyeyi başarıyla tamamladınız.\n5 Puan Kazandınız!"),
+            title: Text(localManager.translate("level_complated")),
+            content: Text(localManager.translate("level_completed_congrats_message")),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop(); // Ana sayfaya dön
                 },
-                child: Text("Ana Sayfa"),
+                child: Text(localManager.translate("home")),
               ),
             ],
           ),
@@ -279,15 +283,15 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text("Seviye Tamamlandı"),
-            content: Text("Daha önce bu seviyeyi tamamladınız!\nPuan Kazanmıştınız."),
+            title: Text(localManager.translate("level_complated")),
+            content: Text(localManager.translate("level_completed_before_message")),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop(); // Ana sayfaya dön
                 },
-                child: Text("Ana Sayfa"),
+                child: Text(localManager.translate("home")),
               ),
             ],
           ),
@@ -301,6 +305,7 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localManager = Provider.of<LocalManager>(context, listen: false);
     return Scaffold(
       appBar: AppBar(title: Text(widget.level)),
       body: FutureBuilder<List<dynamic>>(
@@ -310,15 +315,15 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
             return Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            print('Hata: ${snapshot.error}'); // Debug ekle
-            return Center(child: Text('Hata: ${snapshot.error}'));
+            print('${localManager.translate("error")}: ${snapshot.error}'); // Debug ekle
+            return Center(child: Text('${localManager.translate("error")}: ${snapshot.error}'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Veri bulunamadı'));
+            return Center(child: Text(localManager.translate("data_not_found")));
           }
 
           _words = snapshot.data!.cast<Map<String, dynamic>>();
-          print("Çekilen Kelimeler: $_words"); // Debug ekle
+          print("${localManager.translate("selected_words")} $_words"); // Debug ekle
 
           var word = _words[_currentIndex];
           String correctTurkish = word['turkish'] ?? '';
@@ -339,7 +344,7 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  word['english'] ?? 'Bilinmiyor',
+                  word['english'] ?? localManager.translate("unknown"),
                   style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),
@@ -355,19 +360,24 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
                         Container(
                           width: 24,
                           height: 2,
-                          color: Colors.black,
+                          color: letter == null
+                              ? (Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white // white for dark theme
+                              : Colors.black) // black for light theme
+                              : Colors.transparent, // Don't show underline for revealed letters
                         ),
                       ],
                     );
                   }).toList(),
                 ),
+
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      labelText: 'Türkçe anlamı',
+                      labelText: localManager.translate("turkish_meaning"),
                       border: OutlineInputBorder(),
                     ),
                     onSubmitted: (input) => _checkAnswer(input, correctTurkish),
@@ -376,7 +386,7 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () => _checkAnswer(_controller.text, correctTurkish),
-                  child: Text('Kontrol Et'),
+                  child: Text(localManager.translate("check")),
                 ),
               ],
             ),

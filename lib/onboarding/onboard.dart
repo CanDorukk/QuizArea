@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:quizarea/onboarding/introPages/intro_page_1.dart';
 import 'package:quizarea/onboarding/introPages/intro_page_2.dart';
 import 'package:quizarea/onboarding/introPages/intro_page_3.dart';
 import 'package:quizarea/screens/home_screen.dart';
 import 'package:quizarea/screens/login_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
+import 'package:quizarea/core/LocaleManager.dart';
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({Key? key}): super(key: key);
 
@@ -23,6 +24,7 @@ class _OnBoardState extends State<OnBoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localManager = Provider.of<LocalManager>(context);
     return Scaffold(
      body: Stack(
        children: [
@@ -35,6 +37,7 @@ class _OnBoardState extends State<OnBoardingScreen> {
              });
            },
            children: [
+
              IntroPage1(),
              IntroPage2(),
              IntroPage3(),
@@ -54,7 +57,7 @@ class _OnBoardState extends State<OnBoardingScreen> {
                  onTap: (){
                    _controller.jumpToPage(2);
                  },
-                 child: Text("Skip"),
+                 child: Text(localManager.translate("skip")),
                ),
                // dot indicator
                SmoothPageIndicator(controller: _controller,count: 3),
@@ -70,13 +73,13 @@ class _OnBoardState extends State<OnBoardingScreen> {
                    ),
                    );
                  },
-                 child: Text("Done"),
+                 child: Text(localManager.translate("login")),
                )
                    : GestureDetector(
                  onTap: (){
                    _controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
                  },
-                 child: Text("Next"),
+                 child: Text(localManager.translate("next")),
                ),
              ],
            ),

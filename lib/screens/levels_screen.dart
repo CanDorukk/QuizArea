@@ -1,16 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quizarea/levels/level_1.dart';
+
 
 class LevelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Levels Screen"),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
+      body: Container(// Gri arka plan rengi #4b4b4b
+        child: CustomLevelPath(),
       ),
-      body: CustomLevelPath(),
+    );
+  }
+}
+class CustomBackground extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blueAccent, Colors.purpleAccent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
     );
   }
 }
@@ -64,85 +78,120 @@ class CustomLevelPath extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        height: 2200, // Tüm seviyelerin sığacağı yükseklik
-        child: Stack(
-          children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width, 2200), // Canvas boyutu
-              painter: LevelLinePainter(levelPositions),
-            ),
-            for (int i = 0; i < 20; i++) // 20 seviye için
-              Positioned(
-                left: levelPositions[i].dx - 40,
-                top: levelPositions[i].dy - 40,
-                child: LevelButton(
-                  icon: levelIcons[i],
-                  onPressed: () {
-                    _showLevelCard(context, 'Seviye ${i + 1}');
-                  },
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .snapshots(), // Anlık veri akışı
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Hata: ${snapshot.error}'));
+        }
+
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return Center(child: Text('Kullanıcı verisi bulunamadı.'));
+        }
+
+        List<dynamic> completedLevels = List.from(snapshot.data!['completed_levels'] ?? []);
+
+        return SingleChildScrollView(
+          child: Container(
+            height: 2200, // Tüm seviyelerin sığacağı yükseklik
+            child: Stack(
+              children: [
+                CustomPaint(
+                  size: Size(MediaQuery.of(context).size.width, 2200),
+                  painter: LevelLinePainter(levelPositions),
                 ),
-              ),
-          ],
-        ),
-      ),
+                for (int i = 0; i < 20; i++) // 20 seviye için
+                  Positioned(
+                    left: levelPositions[i].dx - 40,
+                    top: levelPositions[i].dy - 40,
+                    child: LevelButton(
+                      icon: levelIcons[i],
+                      isEnabled: i == 0 || completedLevels.contains('Level_${i}'),
+                      onPressed: () {
+                        if (i == 0 || completedLevels.contains('Level_${i}')) {
+                          _showLevelCard(context, 'Seviye ${i + 1}');
+                        } else {
+                          // Seviye tamamlanmamışsa uyarı göster
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Bu seviyeyi açmak için önceki seviyeyi tamamlamalısınız!'))
+                          );
+                        }
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
-
 
   void _showLevelCard(BuildContext context, String level) {
     late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
-      builder: (context) =>
-          GestureDetector(
-            onTap: () {
-              overlayEntry.remove();
-            },
-            child: Material(
-              color: Colors.black.withOpacity(0.5),
-              child: Center(
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Card(
-                    elevation: 4.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Container(
-                      width: 300.0,
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            level,
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 16.0),
-                          ElevatedButton(
-                            onPressed: () {
-                              overlayEntry.remove();
-                              _startLevel(context, level);
-                            },
-                            child: Text('Başlat'),
-                          ),
-                        ],
+      builder: (context) => GestureDetector(
+        onTap: () {
+          overlayEntry.remove();
+        },
+        child: Material(
+          color: Colors.black.withOpacity(0.5),
+          child: Center(
+            child: GestureDetector(
+              onTap: () {},
+              child: Card(
+                elevation: 8.0,  // Daha belirgin gölge
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0), // Yumuşak köşeler
+                ),
+                child: Container(
+                  width: 320.0,
+                  padding: EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        level,
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
+                        ),
                       ),
-                    ),
+                      SizedBox(height: 20.0),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.blue, // Buton rengi
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          overlayEntry.remove();
+                          _startLevel(context, level);
+                        },
+                        child: Text('Başlat'),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
+        ),
+      ),
     );
 
     Overlay.of(context)?.insert(overlayEntry);
   }
+
 
   void _startLevel(BuildContext context, String level) {
     // Seviye adını dinamik olarak oluştur
@@ -163,12 +212,13 @@ class CustomLevelPath extends StatelessWidget {
     if (levelNumber <= 10) {
       return "Level_${levelNumber}";
     } else if (levelNumber <= 20) {
-      return "A2_first_${50 * (levelNumber - 10)}";
+      return "Level_${levelNumber}";
     }
     // Diğer seviyeler için genişletilebilir
     return "A1_first_50"; // Varsayılan
   }
 }
+
 
 class LevelLinePainter extends CustomPainter {
   final List<Offset> levelPositions;
@@ -178,9 +228,10 @@ class LevelLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.grey
-      ..strokeWidth = 2.0
-      ..style = PaintingStyle.stroke;
+      ..color = Colors.blueGrey
+      ..strokeWidth = 4.0
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round; // Yumuşak uçlar
 
     final path = Path();
     path.moveTo(levelPositions[0].dx, levelPositions[0].dy);
@@ -194,7 +245,16 @@ class LevelLinePainter extends CustomPainter {
       );
     }
 
-    canvas.drawPath(path, paint);
+    // Gradient arka plan
+    final gradient = LinearGradient(
+      colors: [Colors.blue.withOpacity(0.3), Colors.transparent],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+    final gradientPaint = paint..shader = gradient.createShader(Rect.fromCircle(center: Offset(size.width / 2, size.height / 2), radius: 200));
+
+    canvas.drawPath(path, gradientPaint);  // Çizgiyi gradient ile çizin
   }
 
   @override
@@ -203,10 +263,12 @@ class LevelLinePainter extends CustomPainter {
 
 class LevelButton extends StatelessWidget {
   final IconData icon;
+  final bool isEnabled;
   final VoidCallback onPressed;
 
   const LevelButton({
     required this.icon,
+    required this.isEnabled,
     required this.onPressed,
   });
 
@@ -214,24 +276,31 @@ class LevelButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onPressed,
-      child: Container(
-        width: 80.0,
-        height: 80.0,
-        decoration: BoxDecoration(
-          color: Colors.blue,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              offset: Offset(-1, 5),
+      child: Transform.rotate(
+        angle: 25 * 3.14159 / 180, // 25 dereceyi radian cinsine çeviriyoruz
+        child: Container(
+          width: 80.0,
+          height: 90.0, // Yüksekliği biraz artırıyoruz
+          decoration: BoxDecoration(
+            color: isEnabled ? Colors.blue : Colors.grey,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(40.0), // Alt kısmı genişletiyoruz
+              bottomRight: Radius.circular(40.0),
             ),
-          ],
-        ),
-        child: Center(
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 40.0,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                offset: Offset(6, 6), // Yüksekliğini artırarak perspektif etkisi
+                blurRadius: 8.0, // Yumuşak gölge
+              ),
+            ],
+          ),
+          child: Center(
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 40.0,
+            ),
           ),
         ),
       ),

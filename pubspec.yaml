@@ -73,6 +73,9 @@ flutter:
     - assets/images/hangman_3.png
     - assets/images/hangman_4.png
     - assets/images/hangman_5.png
+    - assets/icons/leaderboard.ico
+    - assets/icons/quizarea.ico
+    - assets/icons/profile.ico
 
 
   # The following line ensures that the Material Icons font is

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quizarea/core/LocaleManager.dart';
 
 class IntroPage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final localManager = Provider.of<LocalManager>(context);  // listen: true yapıyoruz
     return Container(
       color: Colors.grey[200],
       child: Column(
@@ -16,8 +19,8 @@ class IntroPage1 extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Açıklama yazısı
-          const Text(
-            'Hoş Geldiniz!',
+          Text(
+            '${localManager.translate("welcome")}',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -25,8 +28,8 @@ class IntroPage1 extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Uygulamamıza hoş geldiniz. Hemen başlayın ve harika deneyimin tadını çıkarın!',
+          Text(
+            localManager.translate("onb_welcome_qa"),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,

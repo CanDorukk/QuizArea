@@ -18,21 +18,30 @@ class BottomNavBar extends StatelessWidget{
         onTap: onTop,
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: localManager.translate('home'),
+            icon: Image.asset(
+              'assets/icons/quizarea.ico',
+              width: 24.0,  // Boyutu 24x24 yapmak için
+              height: 24.0, // Boyutu 24x24 yapmak için
+            ),
+            label: localManager.translate('home'),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: localManager.translate('profile'),
+            icon: Image.asset(
+              'assets/icons/leaderboard.ico',
+              width: 24.0,  // Boyutu 24x24 yapmak için
+              height: 24.0, // Boyutu 24x24 yapmak için
+            ),
+            label: localManager.translate('leaderboard'),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: localManager.translate('settings'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: localManager.translate('crud'),
-          ),
+            icon: Image.asset(
+              'assets/icons/profile.ico',
+              width: 24.0,  // Boyutu 24x24 yapmak için
+              height: 24.0, // Boyutu 24x24 yapmak için
+            ),
+            label: localManager.translate('profile'),
+          )
+
         ]
     );
   }

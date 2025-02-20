@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:quizarea/core/LocaleManager.dart';
 
 class AddFriendScreen extends StatefulWidget {
   @override
@@ -11,10 +13,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   final _searchController = TextEditingController();
   List<Map<String, dynamic>> _searchResults = [];
 
-  // Firebase Auth instance
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // Kullanıcıları aramak
   Future<void> searchUsers(String query) async {
     if (query.isEmpty) {
       setState(() {
@@ -29,30 +27,85 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         .where('fullName', isLessThan: query + 'z')
         .get();
 
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final filteredResults = results.docs
+        .where((doc) {
+      final userId = doc.id;
+      return userId != currentUserId; // Kendisine arkadaşlık isteği gönderemesin
+    })
+        .map((doc) => {
+      'uid': doc.id,
+      'fullName': doc['fullName'],
+    })
+        .toList();
+
     setState(() {
-      _searchResults = results.docs
-          .map((doc) => {
-        'uid': doc.id,
-        'fullName': doc['fullName'],
-      })
-          .toList();
+      _searchResults = filteredResults;
     });
   }
 
-  // Arkadaş ekleme
-  Future<void> addFriend(String friendUserId) async {
+  // Arkadaşlık isteği gönderme fonksiyonu
+  Future<void> sendFriendRequest(String senderId, String receiverId) async {
+    final localManager = Provider.of<LocalManager>(context, listen: false);
+    if (senderId == receiverId) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Kendinize arkadaşlık isteği gönderemezsiniz.")),
+      );
+      return; // Kullanıcı kendisine isteği gönderemez.
+    }
+
     try {
-      final currentUserId = _auth.currentUser?.uid;
-      if (currentUserId == null) {
-        print("Giriş yapılmamış");
+      final requestRef = FirebaseFirestore.instance.collection('friend_requests').doc('$senderId-$receiverId');
+      final doc = await requestRef.get();
+
+      if (doc.exists) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Lütfen giriş yapın!")),
+          SnackBar(content: Text(localManager.translate("alread_set_friend_req_message"))),
         );
         return;
       }
 
-      print("Arkadaş ekleniyor: $currentUserId -> $friendUserId");
+      await requestRef.set({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'status': 'pending', // Başlangıçta istek 'pending' durumda
+      });
 
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Arkadaşlık isteği gönderildi!")),
+      );
+    } catch (e) {
+      print("${localManager.translate("friend_request_error_message")}: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(localManager.translate("error_occoured_message"),)),
+      );
+    }
+  }
+
+
+  // Arkadaşlık isteğini reddetme fonksiyonu
+  Future<void> rejectFriendRequest(String currentUserId, String friendUserId) async {
+    final localManager = Provider.of<LocalManager>(context, listen: false);
+    try {
+      final friendRequestRef = FirebaseFirestore.instance.collection('friend_requests');
+      // Belgeyi bulup status'u 'rejected' olarak güncelleriz
+      await friendRequestRef.doc('$friendUserId-$currentUserId').update({
+        'status': 'rejected',
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(localManager.translate("friend_req_rejected_message"))),
+      );
+    } catch (e) {
+      print("${localManager.translate("friend_req_rejected_error_message")} $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Bir hata oluştu, lütfen tekrar deneyin.")),
+      );
+    }
+  }
+
+  Future<void> addFriend(String currentUserId, String friendUserId) async {
+    try {
       final userRef = FirebaseFirestore.instance.collection('users').doc(currentUserId);
       final friendRef = FirebaseFirestore.instance.collection('users').doc(friendUserId);
 
@@ -65,29 +118,18 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       await friendRef.update({
         'friends': FieldValue.arrayUnion([currentUserId]),
       });
-
-      print("Arkadaş başarıyla eklendi");
-
-      // Başarı mesajı göster
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Arkadaş eklendi!")),
-      );
     } catch (e) {
       print("Arkadaş eklerken hata oluştu: $e");
-
-      // Hata mesajı göster
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Bir hata oluştu, lütfen tekrar deneyin.")),
-      );
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final localManager = Provider.of<LocalManager>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Arkadaş Ekle"),
+        title: Text(localManager.translate("profile_add_friend")),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -97,7 +139,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
               controller: _searchController,
               onChanged: searchUsers,
               decoration: InputDecoration(
-                labelText: 'Arkadaş Ara',
+                labelText: localManager.translate("profile_search_friend"),
                 suffixIcon: Icon(Icons.search),
               ),
             ),
@@ -111,7 +153,11 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                     title: Text(user['fullName']),
                     trailing: IconButton(
                       icon: Icon(Icons.person_add),
-                      onPressed: () => addFriend(user['uid']), // Arkadaş ekleme
+                      onPressed: () async {
+                        // Mevcut kullanıcıyı ve arkadaşı kullanarak isteği gönder
+                        final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+                        await sendFriendRequest(currentUserId, user['uid']);
+                      },
                     ),
                   );
                 },

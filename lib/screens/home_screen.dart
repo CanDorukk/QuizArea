@@ -20,16 +20,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
-    LevelsScreen(),
-    ProfileScreen(),
-    RegisterScreen(),
-    LeaderBoard()
-
+  final List<Map<String, Object>> _screens = [
+    {'screen': LevelsScreen(), 'title': 'levels'},
+    {'screen': LeaderBoard(), 'title': 'leaderboard'},
+    {'screen': ProfileScreen(), 'title': 'profile'},
   ];
 
   void _onItemTapped(int index) async {
-    final localManager = Provider.of<LocalManager>(context, listen: false); // 🔹 listen: false ekledik
+    final localManager = Provider.of<LocalManager>(context, listen: false);
     if (index == 15) { // Profil ekranı seçildiğinde
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
@@ -66,14 +64,42 @@ class _HomeScreenState extends State<HomeScreen> {
     final themeManager = Provider.of<ThemeManager>(context);
     final authModel = Provider.of<AuthenticationModel>(context);
 
+    // Sayfanın başlığını çeviriyoruz
+    String title = localManager.translate(_screens[_selectedIndex]['title'] as String);
+
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(localManager.translate('title')),
+        automaticallyImplyLeading: false,
+        toolbarHeight: 80.0,
+        title: _selectedIndex == 2
+            ? Align(
+          alignment: FractionalOffset(0.0, 0.5),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 140.0),
+            child: Text(title),
+          ),
+        )
+            : Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: Center(
+            child: Text(title),
+          ),
         ),
+        actions: _selectedIndex == 2 // Profile ekranında ikonu göster
+            ? [
+          Builder(
+            builder: (BuildContext context) => IconButton(
+              icon: Icon(Icons.settings), // Gear icon
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer(); // Sağdaki endDrawer'ı aç
+              },
+            ),
+          ),
+        ]
+            : [], // Diğer ekranlarda ikon görünmesin
       ),
-
-      drawer: Drawer(
+      endDrawer: _selectedIndex == 2
+          ? Drawer( // Only show the endDrawer when on the profile screen
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -89,8 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-
-            // 📌 Tema Değiştirme Seçeneği
+            // Tema ve dil seçenekleri...
             SwitchListTile(
               title: Text(localManager.translate('dark_theme')),
               value: themeManager.themeMode == ThemeMode.dark,
@@ -99,8 +124,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               secondary: Icon(Icons.brightness_6),
             ),
-
-            // 📌 Dil Değiştirme Seçeneği
             ListTile(
               leading: Icon(Icons.language),
               title: Text(localManager.translate('language')),
@@ -124,8 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 16),
-
-            // 📌 Giriş Yap & Çıkış Yap Butonu
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -143,17 +164,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                       : ElevatedButton(
                     onPressed: () async {
-                      // 1. "Çıkış yapılıyor..." mesajını göster
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(localManager.translate('logging_out')),
-                          duration: Duration(milliseconds: 1500), // 1.5 saniye
+                          duration: Duration(milliseconds: 1500),
                         ),
                       );
 
                       await Future.delayed(Duration(milliseconds: 1500));
 
-                      // 2. Firebase'den çıkış yap
                       await authModel.signOut();
                       Navigator.pushAndRemoveUntil(
                         context,
@@ -161,11 +180,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             (route) => false,
                       );
 
-                      // 3. "Başarıyla çıkış yapıldı." mesajını göster
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(localManager.translate('logout_success')),
-                          duration: Duration(milliseconds: 1500), // 1.5 saniye
+                          duration: Duration(milliseconds: 1500),
                         ),
                       );
                     },
@@ -176,18 +194,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-
+      )
+          : null, // Diğer ekranlarda endDrawer gösterilmesin
       body: IndexedStack(
         index: _selectedIndex,
         children: [
           LevelsScreen(),
+          LeaderBoard(),
           ProfileScreen(),
-          RegisterScreen(),
-          LeaderBoard()
         ],
       ),
-
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
         onTop: _onItemTapped,

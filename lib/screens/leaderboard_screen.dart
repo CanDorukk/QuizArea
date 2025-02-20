@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quizarea/core/LocaleManager.dart';
 
 class LeaderBoard extends StatelessWidget {
   // Firestore'dan veri çekme
@@ -46,11 +48,8 @@ class LeaderBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localManager = Provider.of<LocalManager>(context, listen: false); // 🔹 listen: false ekledik
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Liderlik Tablosu"),
-        centerTitle: true,
-      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _fetchUsers(),
         builder: (context, snapshot) {
@@ -59,11 +58,11 @@ class LeaderBoard extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Veri çekme hatası: ${snapshot.error}'));
+            return Center(child: Text('${localManager.translate("error_get_data")}: ${snapshot.error}'));
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Liderlik tablosu boş.'));
+            return Center(child: Text(localManager.translate("leaderboard_screen_empty_message")));
           }
 
           List<Map<String, dynamic>> users = snapshot.data!;
@@ -80,8 +79,8 @@ class LeaderBoard extends StatelessWidget {
                     child:Text(user['fullName'][0], style: TextStyle(color: Colors.white)),
                   ),
                   title: Text(user['fullName'], style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  subtitle: Text('Tamamladığı Seviye Sayısı: ${user['completed_levels'].length}'),
-                  trailing: Text('${user['score']} Puan', style: TextStyle(fontSize: 16)),
+                  subtitle: Text('${localManager.translate("completed_levels_count")} ${user['completed_levels'].length}'),
+                  trailing: Text('${user['score']} ${localManager.translate("user_point")}', style: TextStyle(fontSize: 16)),
                 ),
               );
             },

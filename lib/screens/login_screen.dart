@@ -42,18 +42,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final localManager = Provider.of<LocalManager>(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: Text(localManager.translate("login")),
-        centerTitle: true,
-        backgroundColor: Colors.deepPurple,
-        elevation: 0,
-      ),
+
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(height: 24),
               ClipRRect(
                 borderRadius: BorderRadius.circular(20), // Burada istediğin border radius değerini belirleyebilirsin
                 child: Image.asset(
