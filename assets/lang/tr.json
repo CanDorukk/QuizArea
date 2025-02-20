@@ -24,5 +24,15 @@
   "logging_out": "Çıkış yapılıyor",
   "logout_success": "Başarıyla çıkış yapıldı.",
   "reg_name_field": "İsim",
-  "sur_name_field": "Soyisim"
+  "sur_name_field": "Soyisim",
+  "leaderboard" : "Sıralama",
+  "already_have_account" : "Hesabınız Var mı?",
+  "skip" : "Atla",
+  "next": "Sıradaki",
+  "onb_welcome_qa": "QuizArea\\'ya hoş geldiniz. Hemen başlayın ve harika deneyimin tadını çıkarın!",
+  "onb_awaits": "Neler Bekliyor?",
+  "onb_awaits_text" : "Oyunlaştırılmış Quiz soruları ile hem keyifli vakit geçireceksini hem de ingilizce öğreniminizde çok hızlanacaksınız!",
+  "onb_register_text" : "Ne bekliyorsun, hemen kaydol ve bu eşsiz deneyimin tadını çıkart!'",
+  "levels" : "Seviyeler",
+  "profile_score": "Şuanki Skor: "
 }

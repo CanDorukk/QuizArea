@@ -24,6 +24,17 @@
   "logging_out": "Signing Out",
   "logout_success": "Successfully logged out",
   "reg_name_field": "Name",
-  "sur_name_field": "Surname"
+  "sur_name_field": "Surname",
+  "leaderboard" : "Leaderboard",
+  "already_have_account" : "Already Have Account?",
+  "skip" : "Skip",
+  "next": "Next",
+  "onb_welcome_qa": "Welcome to QuizArea. Get started now and enjoy the amazing experience!",
+  "onb_awaits" : "What Awaits?",
+  "onb_awaits_text": "With gamified Quiz questions, you will have a great time and also accelerate your English learning!",
+  "onb_register_text" : "What are you waiting for, sign up now and enjoy this unique experience!",
+  "levels" : "Levels",
+  "profile_score": "Current Score: "
+
 
 }
