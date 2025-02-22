@@ -1,0 +1,26 @@
+{
+
+  "Level_20": [
+    { "english": "abbreviation", "turkish": "kısaltma" },
+    { "english": "accommodation", "turkish": "konaklama" },
+    { "english": "appreciation", "turkish": "takdir" },
+    { "english": "clarification", "turkish": "açıklık" },
+    { "english": "collaboration", "turkish": "iş birliği" },
+    { "english": "complication", "turkish": "karmaşıklık" },
+    { "english": "concentration", "turkish": "konsantrasyon" },
+    { "english": "consideration", "turkish": "değerlendirme" },
+    { "english": "confirmation", "turkish": "doğrulama" },
+    { "english": "confrontation", "turkish": "yüzleşme" },
+    { "english": "consternation", "turkish": "şaşkınlık" },
+    { "english": "construction", "turkish": "inşaat" },
+    { "english": "contribution", "turkish": "katkı" },
+    { "english": "differentiation", "turkish": "farklılaştırma" },
+    { "english": "disposition", "turkish": "duruş" },
+    { "english": "exaggeration", "turkish": "abartma" },
+    { "english": "explanation", "turkish": "açıklama" },
+    { "english": "exploration", "turkish": "keşif" },
+    { "english": "reconciliation", "turkish": "uzlaşma" },
+    { "english": "transportation", "turkish": "taşıma" }
+  ]
+
+}

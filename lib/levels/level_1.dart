@@ -44,25 +44,29 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
           .get();
 
       if (!snapshot.exists) {
-        throw Exception('Firestore\'da "${widget.level}" adında bir doküman bulunamadı.');
+        throw Exception(
+            'Firestore\'da "${widget.level}" adında bir doküman bulunamadı.');
       }
 
       var data = snapshot.data();
       if (data == null || !data.containsKey(widget.level)) {
-        throw Exception('"${widget.level}" dokümanında "${widget.level}" alanı bulunamadı.');
+        throw Exception('"${widget.level}" dokümanında "${widget
+            .level}" alanı bulunamadı.');
       }
 
       List<dynamic> words = data[widget.level];
 
       if (words.isEmpty) {
-        throw Exception('"${widget.level}" ${localManager.translate("no_words_found_message")}.');
+        throw Exception('"${widget.level}" ${localManager.translate(
+            "no_words_found_message")}.');
       }
 
       words.shuffle();
       return words.take(10).toList();
     } catch (e) {
       print('Hata: $e');
-      throw Exception('${localManager.translate("loading_words_occurred_message")}: $e');
+      throw Exception(
+          '${localManager.translate("loading_words_occurred_message")}: $e');
     }
   }
 
@@ -147,26 +151,27 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text(localManager.translate("guess_rights_over_message")),
-        content: Text(localManager.translate("return_homepage_or_restart")),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop(); // Ana sayfa
-            },
-            child: Text(localManager.translate("home")),
+      builder: (context) =>
+          AlertDialog(
+            title: Text(localManager.translate("guess_rights_over_message")),
+            content: Text(localManager.translate("return_homepage_or_restart")),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Ana sayfa
+                },
+                child: Text(localManager.translate("home")),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _restartLevel();
+                },
+                child: Text(localManager.translate("play_again")),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _restartLevel();
-            },
-            child: Text(localManager.translate("play_again")),
-          ),
-        ],
-      ),
     );
   }
 
@@ -217,7 +222,8 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
       }
 
       // Mevcut completed_levels dizisini al
-      List<dynamic> completedLevels = List.from(snapshot.data()?['completed_levels'] ?? []);
+      List<dynamic> completedLevels = List.from(
+          snapshot.data()?['completed_levels'] ?? []);
 
       // Seviye zaten eklenmişse, bir şey yapma
       if (!completedLevels.contains(widget.level)) {
@@ -249,8 +255,9 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
         print('Kullanıcı belgesi bulunamadı!');
         return;
       }
-      final localManager = Provider.of<LocalManager>(context , listen: false);
-      List<dynamic> completedLevels = List.from(snapshot.data()?['completed_levels'] ?? []);
+      final localManager = Provider.of<LocalManager>(context, listen: false);
+      List<dynamic> completedLevels = List.from(
+          snapshot.data()?['completed_levels'] ?? []);
 
       // Seviye tamamlanmamışsa, puan ekle ve tamamlanan seviyeye ekle
       if (!completedLevels.contains(widget.level)) {
@@ -263,38 +270,42 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            title: Text(localManager.translate("level_complated")),
-            content: Text(localManager.translate("level_completed_congrats_message")),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop(); // Ana sayfaya dön
-                },
-                child: Text(localManager.translate("home")),
+          builder: (context) =>
+              AlertDialog(
+                title: Text(localManager.translate("level_complated")),
+                content: Text(
+                    localManager.translate("level_completed_congrats_message")),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(); // Ana sayfaya dön
+                    },
+                    child: Text(localManager.translate("home")),
+                  ),
+                ],
               ),
-            ],
-          ),
         );
       } else {
         // Seviye daha önce tamamlandıysa, sadece kullanıcıya mesaj göster
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            title: Text(localManager.translate("level_complated")),
-            content: Text(localManager.translate("level_completed_before_message")),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop(); // Ana sayfaya dön
-                },
-                child: Text(localManager.translate("home")),
+          builder: (context) =>
+              AlertDialog(
+                title: Text(localManager.translate("level_complated")),
+                content: Text(
+                    localManager.translate("level_completed_before_message")),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(); // Ana sayfaya dön
+                    },
+                    child: Text(localManager.translate("home")),
+                  ),
+                ],
               ),
-            ],
-          ),
         );
       }
     } catch (e) {
@@ -315,15 +326,17 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
             return Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            print('${localManager.translate("error")}: ${snapshot.error}'); // Debug ekle
-            return Center(child: Text('${localManager.translate("error")}: ${snapshot.error}'));
+            print('${localManager.translate("error")}: ${snapshot.error}');
+            return Center(child: Text(
+                '${localManager.translate("error")}: ${snapshot.error}'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text(localManager.translate("data_not_found")));
+            return Center(
+                child: Text(localManager.translate("data_not_found")));
           }
 
           _words = snapshot.data!.cast<Map<String, dynamic>>();
-          print("${localManager.translate("selected_words")} $_words"); // Debug ekle
+          print("${localManager.translate("selected_words")} $_words");
 
           var word = _words[_currentIndex];
           String correctTurkish = word['turkish'] ?? '';
@@ -336,11 +349,16 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  _imageAsset,
-                  height: 250.0,
-                  width: 200,
-                  fit: BoxFit.cover,
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 500), // Animasyon süresi
+                  child: Image.asset(
+                    _imageAsset,
+                    key: ValueKey<String>(_imageAsset),
+                    // Resim değiştikçe anahtar değişir
+                    height: 250.0,
+                    width: 200,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 SizedBox(height: 20),
                 Text(
@@ -355,16 +373,20 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
                       children: [
                         Text(
                           letter ?? '',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         Container(
                           width: 24,
                           height: 2,
                           color: letter == null
-                              ? (Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white // white for dark theme
-                              : Colors.black) // black for light theme
-                              : Colors.transparent, // Don't show underline for revealed letters
+                              ? (Theme
+                              .of(context)
+                              .brightness == Brightness.dark
+                              ? Colors.white // dark theme için beyaz
+                              : Colors.black) // light theme için siyah
+                              : Colors
+                              .transparent, // Revealed harf için alt çizgi yok
                         ),
                       ],
                     );
@@ -385,7 +407,8 @@ class _LevelDetailScreenState extends State<LevelDetailScreen> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => _checkAnswer(_controller.text, correctTurkish),
+                  onPressed: () =>
+                      _checkAnswer(_controller.text, correctTurkish),
                   child: Text(localManager.translate("check")),
                 ),
               ],

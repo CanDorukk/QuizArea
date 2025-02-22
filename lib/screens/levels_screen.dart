@@ -247,12 +247,12 @@ class LevelLinePainter extends CustomPainter {
 
     // Gradient arka plan
     final gradient = LinearGradient(
-      colors: [Colors.blue.withOpacity(0.3), Colors.transparent],
+      colors: [Colors.blue.withOpacity(0.8), Colors.transparent],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
 
-    final gradientPaint = paint..shader = gradient.createShader(Rect.fromCircle(center: Offset(size.width / 2, size.height / 2), radius: 200));
+    final gradientPaint = paint..shader = gradient.createShader(Rect.fromCircle(center: Offset(size.width / 3, size.height / 3), radius: 2000));
 
     canvas.drawPath(path, gradientPaint);  // Çizgiyi gradient ile çizin
   }

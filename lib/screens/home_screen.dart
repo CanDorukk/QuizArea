@@ -65,7 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final authModel = Provider.of<AuthenticationModel>(context);
 
     // Sayfanın başlığını çeviriyoruz
-    String title = localManager.translate(_screens[_selectedIndex]['title'] as String);
+    String title = localManager.translate(
+        _screens[_selectedIndex]['title'] as String);
 
     return Scaffold(
       appBar: AppBar(
@@ -88,12 +89,14 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: _selectedIndex == 2 // Profile ekranında ikonu göster
             ? [
           Builder(
-            builder: (BuildContext context) => IconButton(
-              icon: Icon(Icons.settings), // Gear icon
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer(); // Sağdaki endDrawer'ı aç
-              },
-            ),
+            builder: (BuildContext context) =>
+                IconButton(
+                  icon: Icon(Icons.settings), // Gear icon
+                  onPressed: () {
+                    Scaffold.of(context)
+                        .openEndDrawer(); // Sağdaki endDrawer'ı aç
+                  },
+                ),
           ),
         ]
             : [], // Diğer ekranlarda ikon görünmesin
@@ -182,7 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(localManager.translate('logout_success')),
+                          content: Text(
+                              localManager.translate('logout_success')),
                           duration: Duration(milliseconds: 1500),
                         ),
                       );

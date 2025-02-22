@@ -22,7 +22,7 @@ void main() async {
     persistenceEnabled: true, // Çevrimdışı verileri etkinleştiriyoruz
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED, // Cache boyutunu sınırsız yapıyoruz
   );
-  //await uploadWords(); // JSON verisini yüklemek için
+ //await uploadWords(); // JSON verisini yüklemek için
   runApp(MyApp());
 }
 

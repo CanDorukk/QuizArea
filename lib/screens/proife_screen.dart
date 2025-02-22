@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:quizarea/core/LocaleManager.dart';
+import 'package:quizarea/core/ThemeManager.dart';
 import 'package:quizarea/services/add_friend.dart';
 import 'package:quizarea/services/friend_list.dart';
 import 'package:quizarea/services/friend_request.dart';
@@ -36,16 +37,28 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final User? currentUser = _auth.currentUser;
     final localManager = Provider.of<LocalManager>(context, listen: false); // 🔹 listen: false ekledik
+    final themeManager = Provider.of<ThemeManager>(context);  // Use ThemeManager for theme state
+
+    // Get current text and background color from the current theme
+    Color textColor = Theme.of(context).textTheme.bodyLarge!.color!;
+    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    Color avatarBackgroundColor = themeManager.themeMode == ThemeMode.dark ? Colors.orange : Colors.blue;
 
     return Scaffold(
-      backgroundColor: Colors.blue.shade500,
+      backgroundColor: backgroundColor,
       body: Column(
         children: [
           Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue.shade700, Colors.blue.shade700],
+              gradient: themeManager.themeMode == ThemeMode.dark
+                  ? LinearGradient(
+                colors: [Colors.black, Colors.grey[850]!],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+                  : LinearGradient(
+                colors: [Colors.white, Colors.grey[200]!],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -55,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundColor: Colors.orange,
+                  backgroundColor: avatarBackgroundColor,
                   child: Icon(Icons.person, size: 30, color: Colors.white),
                 ),
                 SizedBox(width: 16),
@@ -64,14 +77,14 @@ class ProfileScreen extends StatelessWidget {
                     future: _getUserInfo(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator(color: Colors.white);
+                        return CircularProgressIndicator(color: textColor);
                       }
                       if (snapshot.hasError || snapshot.data == null) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("${localManager.translate("welcome")}", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                            Text("${currentUser?.displayName}", style: TextStyle(color: Colors.white, fontSize: 16)),
+                            Text("${localManager.translate("welcome")}", style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text("${currentUser?.displayName}", style: TextStyle(color: textColor, fontSize: 16)),
                           ],
                         );
                       }
@@ -82,8 +95,8 @@ class ProfileScreen extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("${localManager.translate("welcome")}", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text(fullName, style: TextStyle(color: Colors.white, fontSize: 16)),
+                          Text("${localManager.translate("welcome")}", style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(fullName, style: TextStyle(color: textColor, fontSize: 16)),
                         ],
                       );
                     },
@@ -93,24 +106,24 @@ class ProfileScreen extends StatelessWidget {
                   future: _getUserScore(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(color: Colors.white);
+                      return CircularProgressIndicator(color: textColor);
                     }
                     if (snapshot.hasError || snapshot.data == null) {
-                      return Text("${localManager.translate("profile_score")}: 0", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold));
+                      return Text("${localManager.translate("profile_score")}: 0", style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.bold));
                     }
 
                     final score = snapshot.data ?? 0;
-                    return Text("${localManager.translate("profile_score")}: $score", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold));
+                    return Text("${localManager.translate("profile_score")}: $score", style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.bold));
                   },
                 ),
               ],
             ),
           ),
-          SizedBox(height: 32,),
+          SizedBox(height: 32),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.blue.shade500,
+                color: backgroundColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30), topRight: Radius.circular(30),
                 ),
@@ -120,11 +133,11 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: backgroundColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: themeManager.themeMode == ThemeMode.dark ? Colors.black.withOpacity(0.5) : Colors.grey.withOpacity(0.3),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -132,9 +145,9 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        _buildMenuItem(context, localManager.translate("profile_add_friend"), Icons.person_add, AddFriendScreen()),
-                        _buildMenuItem(context, localManager.translate("profile_see_friend_requests"), Icons.list, FriendRequestsScreen()),
-                        _buildMenuItem(context, localManager.translate("profile_see_friends"), Icons.people, FriendListScreen()),
+                        _buildMenuItem(context, localManager.translate("profile_add_friend"), Icons.person_add, AddFriendScreen(), textColor),
+                        _buildMenuItem(context, localManager.translate("profile_see_friend_requests"), Icons.list, FriendRequestsScreen(), textColor),
+                        _buildMenuItem(context, localManager.translate("profile_see_friends"), Icons.people, FriendListScreen(), textColor),
                       ],
                     ),
                   ),
@@ -148,10 +161,10 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, String title, IconData icon, Widget screen) {
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon, Widget screen, Color textColor) {
     return ListTile(
-      title: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
-      trailing: Icon(icon, size: 18, color: Colors.blue.shade400),
+      title: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
+      trailing: Icon(icon, size: 18, color: textColor),
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
       },

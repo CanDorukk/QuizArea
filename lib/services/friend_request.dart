@@ -10,9 +10,7 @@ class FriendRequestsScreen extends StatefulWidget {
 }
 
 class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  List<DocumentSnapshot> _friendRequests = []; // Arkadaşlık isteklerini tutacak liste
 
   Future<String> getUserName(String userId) async {
     final localManager = Provider.of<LocalManager>(context, listen: false);
@@ -31,15 +29,15 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localManager.translate("friend_requests"),),
+        title: Text(localManager.translate("friend_requests")),
       ),
-      body: FutureBuilder(
-        future: FirebaseFirestore.instance
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
             .collection('friend_requests')
             .where('receiverId', isEqualTo: currentUserId)
             .where('status', isEqualTo: 'pending') // Bekleyen istekler
-            .get(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            .snapshots(), // Stream ile veriyi al
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
@@ -49,7 +47,6 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
           }
 
           final friendRequests = snapshot.data!.docs;
-          _friendRequests = friendRequests; // Listeyi güncelle
 
           return ListView.builder(
             itemCount: friendRequests.length,
@@ -75,7 +72,7 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
                   final senderName = userSnapshot.data!; // Gönderenin adı
 
                   return ListTile(
-                    title: Text("$senderName'${localManager.translate("friend_request_from")}"),
+                    title: Text("${localManager.translate("friend_request_from")} '$senderName'"),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -123,15 +120,13 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
       await requestRef.delete(); // İstek kabul edildikten sonra isteği sil
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content:
-        Text("friend_request_accepted")
-        ),
+        SnackBar(content: Text(localManager.translate("friend_request_accepted"))),
       );
     } catch (e) {
-        final localManager = Provider.of<LocalManager>(context, listen: false);
+      final localManager = Provider.of<LocalManager>(context, listen: false);
       print("Arkadaşlık isteği kabul edilirken hata oluştu: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localManager.translate("error_occoured_message"))),
+        SnackBar(content: Text(localManager.translate("error_occured_message"))),
       );
     }
   }
@@ -145,18 +140,13 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
       // İsteği reddet
       await requestRef.delete();
 
-      // UI'yi güncelle: Reddedilen isteği listeyi güncelle
-      setState(() {
-        _friendRequests.removeWhere((request) => request['senderId'] == senderId);
-      });
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(localManager.translate("friend_req_rejected_message"))),
       );
     } catch (e) {
       print("Arkadaşlık isteği reddedilirken hata oluştu: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localManager.translate("error_occoured_message"))),
+        SnackBar(content: Text(localManager.translate("error_occured_message"))),
       );
     }
   }

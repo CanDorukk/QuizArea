@@ -6,11 +6,11 @@ Future<void> uploadWords() async {
   final firestore = FirebaseFirestore.instance;
 
   final String jsonString =
-  await root_bundle.rootBundle.loadString('assets/json/ing_kelimeler.json');
+  await root_bundle.rootBundle.loadString('assets/json/upload_new_words.json');
 
   final Map<String, dynamic> data = jsonDecode(jsonString);
 
-  await firestore.collection('words').doc('Level_2').set(data);
+  await firestore.collection('words').doc('Level_20').set(data);
 
   print('Veri Firestore\'a yüklendi!');
 }
