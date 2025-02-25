@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quizarea/core/LocaleManager.dart';
 import 'package:flutter/material.dart';
+import 'package:quizarea/core/ThemeManager.dart';
 import 'package:quizarea/screens/home_screen.dart';import 'package:provider/provider.dart';
 import 'package:quizarea/models/authentication_model.dart';
 import 'package:quizarea/screens/login_screen.dart'; // AuthenticationModel'in bulunduğu dosya
@@ -77,6 +78,9 @@ class _RegisteScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final localManager = Provider.of<LocalManager>(context);
+    final themeManager = Provider.of<ThemeManager>(context);
+
+    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacement(
@@ -86,7 +90,7 @@ class _RegisteScreenState extends State<RegisterScreen> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
+        backgroundColor: backgroundColor,
 
         body: Center(
           child: SingleChildScrollView(

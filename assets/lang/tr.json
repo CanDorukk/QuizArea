@@ -75,6 +75,7 @@
   "return_homepage_or_restart" : "Ana sayfaya dönmek veya tekrar başlamak ister misiniz?",
   "guess_rights_over_message" : "Tahmin Hakkın Bitti",
   "loading_words_occurred_message" : "Kelimeler yüklenirken bir hata oluştu",
-  "no_words_found_message" : "dokümanında kelime bulunamadı"
+  "no_words_found_message" : "dokümanında kelime bulunamadı",
+  "back_login" : "Giriş sayfasına geri dön"
 
 }

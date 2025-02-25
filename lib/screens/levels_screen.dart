@@ -3,17 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quizarea/levels/level_1.dart';
 
-
 class LevelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(// Gri arka plan rengi #4b4b4b
+      body: Container(
         child: CustomLevelPath(),
       ),
     );
   }
 }
+
 class CustomBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -110,19 +110,22 @@ class CustomLevelPath extends StatelessWidget {
                   Positioned(
                     left: levelPositions[i].dx - 40,
                     top: levelPositions[i].dy - 40,
-                    child: LevelButton(
-                      icon: levelIcons[i],
-                      isEnabled: i == 0 || completedLevels.contains('Level_${i}'),
-                      onPressed: () {
-                        if (i == 0 || completedLevels.contains('Level_${i}')) {
-                          _showLevelCard(context, 'Seviye ${i + 1}');
-                        } else {
-                          // Seviye tamamlanmamışsa uyarı göster
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Bu seviyeyi açmak için önceki seviyeyi tamamlamalısınız!'))
-                          );
-                        }
-                      },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0), // Equal padding from left and right
+                      child: LevelButton(
+                        index: i,  // Pass the index here
+                        icon: levelIcons[i],
+                        isEnabled: i == 0 || completedLevels.contains('Level_${i}'),
+                        onPressed: () {
+                          if (i == 0 || completedLevels.contains('Level_${i}')) {
+                            _showLevelCard(context, 'Seviye ${i + 1}');
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Bu seviyeyi açmak için önceki seviyeyi tamamlamalısınız!')),
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
               ],
@@ -132,6 +135,7 @@ class CustomLevelPath extends StatelessWidget {
       },
     );
   }
+
 
   void _showLevelCard(BuildContext context, String level) {
     late OverlayEntry overlayEntry;
@@ -192,7 +196,6 @@ class CustomLevelPath extends StatelessWidget {
     Overlay.of(context)?.insert(overlayEntry);
   }
 
-
   void _startLevel(BuildContext context, String level) {
     // Seviye adını dinamik olarak oluştur
     String firestoreLevelName = _getFirestoreLevelName(level);
@@ -218,7 +221,6 @@ class CustomLevelPath extends StatelessWidget {
     return "A1_first_50"; // Varsayılan
   }
 }
-
 
 class LevelLinePainter extends CustomPainter {
   final List<Offset> levelPositions;
@@ -265,19 +267,24 @@ class LevelButton extends StatelessWidget {
   final IconData icon;
   final bool isEnabled;
   final VoidCallback onPressed;
+  final int index; // Add an index to distinguish between odd and even levels
 
   const LevelButton({
     required this.icon,
     required this.isEnabled,
     required this.onPressed,
+    required this.index, // Pass the index from the calling code
   });
 
   @override
   Widget build(BuildContext context) {
+    // Check if the index is odd or even to apply the correct rotation
+    double rotationAngle = index % 2 == 0 ? -25 * 3.14159 / 180 : 25 * 3.14159 / 180;
+
     return GestureDetector(
       onTap: onPressed,
       child: Transform.rotate(
-        angle: 25 * 3.14159 / 180, // 25 dereceyi radian cinsine çeviriyoruz
+        angle: rotationAngle, // Apply the dynamic rotation angle
         child: Container(
           width: 80.0,
           height: 90.0, // Yüksekliği biraz artırıyoruz

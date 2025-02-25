@@ -63,6 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final localManager = Provider.of<LocalManager>(context);
     final themeManager = Provider.of<ThemeManager>(context);
     final authModel = Provider.of<AuthenticationModel>(context);
+    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    // Get the text color based on the current theme
+    Color textColor = Theme.of(context).textTheme.bodyLarge!.color!;
+
 
     // Sayfanın başlığını çeviriyoruz
     String title = localManager.translate(
@@ -72,53 +76,58 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: 80.0,
+        backgroundColor: backgroundColor, // Set the AppBar color
         title: _selectedIndex == 2
             ? Align(
           alignment: FractionalOffset(0.0, 0.5),
           child: Padding(
             padding: const EdgeInsets.only(left: 140.0),
-            child: Text(title),
+            child: Text(
+              title,
+              style: TextStyle(color: textColor), // Set text color
+            ),
           ),
         )
             : Padding(
           padding: const EdgeInsets.only(top: 20.0),
           child: Center(
-            child: Text(title),
+            child: Text(
+              title,
+              style: TextStyle(color: textColor), // Set text color
+            ),
           ),
         ),
         actions: _selectedIndex == 2 // Profile ekranında ikonu göster
             ? [
           Builder(
-            builder: (BuildContext context) =>
-                IconButton(
-                  icon: Icon(Icons.settings), // Gear icon
-                  onPressed: () {
-                    Scaffold.of(context)
-                        .openEndDrawer(); // Sağdaki endDrawer'ı aç
-                  },
-                ),
+            builder: (BuildContext context) => IconButton(
+              icon: Icon(Icons.settings, color: textColor), // Set icon color
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer(); // Sağdaki endDrawer'ı aç
+              },
+            ),
           ),
         ]
             : [], // Diğer ekranlarda ikon görünmesin
       ),
       endDrawer: _selectedIndex == 2
-          ? Drawer( // Only show the endDrawer when on the profile screen
+          ? Drawer(
+        // Only show the endDrawer when on the profile screen
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: backgroundColor, // Set the drawer header color
               ),
               child: Text(
                 localManager.translate("settings"),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: textColor, // Set drawer text color
                   fontSize: 24,
                 ),
               ),
             ),
-            // Tema ve dil seçenekleri...
             SwitchListTile(
               title: Text(localManager.translate('dark_theme')),
               value: themeManager.themeMode == ThemeMode.dark,
@@ -185,8 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                              localManager.translate('logout_success')),
+                          content: Text(localManager.translate('logout_success')),
                           duration: Duration(milliseconds: 1500),
                         ),
                       );

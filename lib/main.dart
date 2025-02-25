@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         builder: (context, themeManager, localManager, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Flutter Firebase Demo',
+            title: 'Quiz Area',
             theme: ThemeData.light(),
             darkTheme: ThemeData.dark(),
             themeMode: themeManager.themeMode,
@@ -77,7 +77,7 @@ class AuthCheck extends StatelessWidget {
         if (snapshot.hasData) {
           return HomeScreen(); // Kullanıcı giriş yaptı
         } else {
-          return OnBoardingScreen(); // Kullanıcı giriş yapmadı
+          return OnboardingScreen(); // Kullanıcı giriş yapmadı
         }
       },
     );

@@ -1,4 +1,5 @@
 import 'package:quizarea/core/LocaleManager.dart';
+import 'package:quizarea/core/ThemeManager.dart';
 import 'package:quizarea/models/authentication_model.dart';
 import 'package:quizarea/screens/home_screen.dart';
 import 'package:quizarea/screens/register_screen.dart';
@@ -40,8 +41,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final localManager = Provider.of<LocalManager>(context);
+    final themeManager = Provider.of<ThemeManager>(context);
+
+    Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: backgroundColor,
 
       body: Center(
         child: SingleChildScrollView(

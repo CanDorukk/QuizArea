@@ -49,20 +49,21 @@ class ProfileScreen extends StatelessWidget {
       body: Column(
         children: [
           Container(
+            margin: EdgeInsets.all(10),
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: themeManager.themeMode == ThemeMode.dark
                   ? LinearGradient(
-                colors: [Colors.black, Colors.grey[850]!],
+                colors: [Colors.black38,Colors.grey[850]!],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )
                   : LinearGradient(
-                colors: [Colors.white, Colors.grey[200]!],
+                colors: [backgroundColor, Colors.white60 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
             child: Row(
               children: [

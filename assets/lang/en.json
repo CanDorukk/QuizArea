@@ -70,12 +70,13 @@
   "selected_words" : "Selected Words",
   "level_completed_before_message" : "You have completed this level before!\nYou have earned points",
   "level_complated" : "Level Complated",
-  "level_completed_congrats_message" : "Congratulations! You have successfully completed this level.\\nYou Earned 5 Points!",
+  "level_completed_congrats_message" : "Congratulations! You have successfully completed this level.\nYou Earned 5 Points!",
   "play_again" : "Play Again",
   "return_homepage_or_restart" : "Would you like to return to the home page or start over?",
   "guess_rights_over_message" : "Your Guessing Rights Are Over",
   "loading_words_occurred_message" : "An error occurred while loading words",
-  "no_words_found_message" : "No words found in document"
+  "no_words_found_message" : "No words found in document",
+  "back_login" : "Back to login"
 
 
 }
