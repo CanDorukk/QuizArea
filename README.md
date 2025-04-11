@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://getbootstrap.com">
-<img src="assets/images/QuizArea.png" width="200" height="165">
+<img src="assets/images/QuizAreaIconDark.png" width="200" height="165">
 </a>
 </p>
 
